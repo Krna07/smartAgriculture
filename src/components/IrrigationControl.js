@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { SlidersHorizontal, Zap, BarChart2, Sprout, AlertTriangle, Droplets, Loader2 } from 'lucide-react';
 
 const IrrigationControl = ({ socket }) => {
   const [sensors, setSensors] = useState([]);
@@ -99,8 +100,8 @@ const IrrigationControl = ({ socket }) => {
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-2">Irrigation Control</h1>
-        <p className="text-white/80">Manage water distribution across your plant rows</p>
+        <h1 className="text-4xl font-bold text-slate-800 mb-2">Irrigation Control</h1>
+        <p className="text-slate-600">Manage water distribution across your plant rows</p>
       </div>
 
       {/* Control Panel */}
@@ -109,7 +110,7 @@ const IrrigationControl = ({ socket }) => {
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20">
           <div className="flex items-center space-x-3 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-              <span className="text-white text-lg">🎛️</span>
+              <SlidersHorizontal className="w-5 h-5 text-white" />
             </div>
             <h3 className="text-xl font-bold text-gray-800">Manual Irrigation</h3>
           </div>
@@ -154,7 +155,7 @@ const IrrigationControl = ({ socket }) => {
               type="submit" 
               className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl font-medium"
             >
-              Start Irrigation 💧
+              Start Irrigation <Droplets className="w-4 h-4 inline ml-1" />
             </button>
           </form>
         </div>
@@ -163,7 +164,7 @@ const IrrigationControl = ({ socket }) => {
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20">
           <div className="flex items-center space-x-3 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-              <span className="text-white text-lg">⚡</span>
+              <Zap className="w-5 h-5 text-white" />
             </div>
             <h3 className="text-xl font-bold text-gray-800">Quick Actions</h3>
           </div>
@@ -186,7 +187,7 @@ const IrrigationControl = ({ socket }) => {
                         <span className="font-medium text-gray-800">{row}</span>
                         {needsWater && (
                           <span className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full font-medium">
-                            ⚠️ Low Moisture
+                          <AlertTriangle className="w-3 h-3 inline mr-1" />Low Moisture
                           </span>
                         )}
                       </div>
@@ -210,7 +211,7 @@ const IrrigationControl = ({ socket }) => {
                     >
                       {isCurrentlyIrrigating ? (
                         <span className="flex items-center space-x-2">
-                          <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                          <Loader2 className="w-4 h-4 animate-spin" />
                           <span>Irrigating...</span>
                         </span>
                       ) : (
@@ -230,7 +231,7 @@ const IrrigationControl = ({ socket }) => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white text-lg">📊</span>
+              <BarChart2 className="w-5 h-5 text-white" />
             </div>
             <h3 className="text-xl font-bold text-gray-800">Irrigation History</h3>
           </div>
@@ -246,7 +247,7 @@ const IrrigationControl = ({ socket }) => {
           <div className="overflow-hidden">
             {irrigationHistory.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                <div className="text-4xl mb-2">🌱</div>
+                <Sprout className="w-10 h-10 mx-auto mb-2 opacity-40" />
                 <p>No irrigation history available</p>
                 <p className="text-sm">Start your first irrigation to see activity here</p>
               </div>

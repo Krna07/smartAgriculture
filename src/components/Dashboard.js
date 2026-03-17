@@ -12,7 +12,7 @@ import {
   Target,
 } from "lucide-react";
 
-const Dashboard = ({ socket }) => {
+const Dashboard = ({ socket, user }) => {
   const [sensors, setSensors] = useState([]);
   const [recentIrrigation, setRecentIrrigation] = useState([]);
   const [stats, setStats] = useState({
@@ -99,18 +99,24 @@ const Dashboard = ({ socket }) => {
           <div>
             <h1 className="text-xl font-bold flex items-center gap-2">
               <Waves className="w-5 h-5 text-green-400" />
-              Smart Irrigation System
+              {user?.farmName || 'Smart Irrigation System'}
             </h1>
-
             <div className="flex items-center gap-2 text-sm text-slate-400 mt-1">
               <MapPin className="w-4 h-4" />
-              Block A, Sector 4
+              Welcome back, {user?.name || 'Farmer'}
             </div>
           </div>
 
-          <button className="flex items-center gap-2 px-5 py-2 bg-green-500 text-black rounded-lg font-semibold hover:bg-green-400">
-            Start New Cycle
-          </button>
+          <div className="flex items-center gap-3">
+            {user && !user.hasHardware && (
+              <span className="text-xs px-3 py-1 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-full">
+                Demo Mode
+              </span>
+            )}
+            <button className="flex items-center gap-2 px-5 py-2 bg-green-500 text-black rounded-lg font-semibold hover:bg-green-400">
+              Start New Cycle
+            </button>
+          </div>
         </header>
 
         {/* TOP STATS */}

@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { AlertTriangle, XCircle, CheckCircle, Info, Megaphone, CalendarDays, ClipboardList } from 'lucide-react';
 
 const Notifications = ({ notifications, setNotifications }) => {
   const markAsRead = async (id) => {
@@ -23,11 +24,11 @@ const Notifications = ({ notifications, setNotifications }) => {
 
   const getNotificationIcon = (type) => {
     switch (type) {
-      case 'warning': return '⚠️';
-      case 'error': return '❌';
-      case 'success': return '✅';
-      case 'info': return 'ℹ️';
-      default: return '📢';
+      case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+      case 'error':   return <XCircle className="w-5 h-5 text-red-500" />;
+      case 'success': return <CheckCircle className="w-5 h-5 text-green-500" />;
+      case 'info':    return <Info className="w-5 h-5 text-blue-500" />;
+      default:        return <Megaphone className="w-5 h-5 text-gray-500" />;
     }
   };
 
@@ -75,8 +76,8 @@ const Notifications = ({ notifications, setNotifications }) => {
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-2">Notifications</h1>
-        <p className="text-white/80">Stay updated with your irrigation system alerts</p>
+        <h1 className="text-4xl font-bold text-slate-800 mb-2">Notifications</h1>
+        <p className="text-slate-600">Stay updated with your irrigation system alerts</p>
       </div>
 
       {/* Stats and Actions */}
@@ -122,7 +123,7 @@ const Notifications = ({ notifications, setNotifications }) => {
       <div className="space-y-6">
         {notifications.length === 0 ? (
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-12 text-center shadow-xl">
-            <div className="text-6xl mb-4">🔔</div>
+            <Megaphone className="w-14 h-14 text-gray-300 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-gray-800 mb-2">No Notifications</h3>
             <p className="text-gray-600">
               You're all caught up! New alerts will appear here when your system needs attention.
@@ -134,7 +135,7 @@ const Notifications = ({ notifications, setNotifications }) => {
             {todayNotifications.length > 0 && (
               <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20">
                 <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center space-x-2">
-                  <span>📅</span>
+                  <CalendarDays className="w-5 h-5 text-gray-500" />
                   <span>Today</span>
                 </h3>
                 <div className="space-y-3">
@@ -145,7 +146,7 @@ const Notifications = ({ notifications, setNotifications }) => {
                       onClick={() => !notification.read && markAsRead(notification.id)}
                     >
                       <div className="flex items-start space-x-3">
-                        <div className="text-2xl flex-shrink-0 mt-1">
+                        <div className="flex-shrink-0 mt-1">
                           {getNotificationIcon(notification.type)}
                         </div>
                         
@@ -185,7 +186,7 @@ const Notifications = ({ notifications, setNotifications }) => {
             {olderNotifications.length > 0 && (
               <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20">
                 <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center space-x-2">
-                  <span>📋</span>
+                  <ClipboardList className="w-5 h-5 text-gray-500" />
                   <span>Earlier</span>
                 </h3>
                 <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -196,7 +197,7 @@ const Notifications = ({ notifications, setNotifications }) => {
                       onClick={() => !notification.read && markAsRead(notification.id)}
                     >
                       <div className="flex items-start space-x-3">
-                        <div className="text-xl flex-shrink-0 mt-1">
+                        <div className="flex-shrink-0 mt-1">
                           {getNotificationIcon(notification.type)}
                         </div>
                         
