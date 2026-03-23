@@ -13,16 +13,9 @@ html {
 }
 
 /* Farm background with parallax effect */
-/* .farm-background-container {
-  background-image: "frontend\public\eric-brehm-fZDIGIZ1e8E-unsplash.jpg" ;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-} */
-
 .farm-background-container {
   position: relative;
-  /* background-image: url("/frontend/public/eric-brehm-fZDIGIZ1e8E-unsplash.jpg"); */
+  background-image: url("/eric-brehm-fZDIGIZ1e8E-unsplash.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
