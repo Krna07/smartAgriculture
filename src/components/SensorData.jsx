@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { Thermometer, Wind, Radio, AlertTriangle, X, Droplets } from 'lucide-react';
 
 const SensorData = ({ socket }) => {
@@ -10,6 +10,7 @@ const SensorData = ({ socket }) => {
     fetchSensors();
 
     socket.on('sensorUpdate', (sensor) => {
+      console.log(`[SensorUpdate] ${sensor.sensorId} | Temp: ${sensor.temperature}°C | Humidity: ${sensor.humidity}% | Soil: ${sensor.soilMoisture}% | Demo: ${sensor.isDemo}`);
       setSensors(prev => {
         const existing = prev.find(s => s.sensorId === sensor.sensorId);
         if (existing) {
@@ -27,7 +28,7 @@ const SensorData = ({ socket }) => {
 
   const fetchSensors = async () => {
     try {
-      const response = await axios.get('/api/sensors');
+      const response = await api.get('/api/sensors');
       setSensors(response.data);
     } catch (error) {
       console.error('Error fetching sensors:', error);
@@ -61,11 +62,18 @@ const SensorData = ({ socket }) => {
             <h3 className="text-xl font-bold text-gray-800">{sensor.plantRow}</h3>
             <p className="text-sm text-gray-500">ID: {sensor.sensorId}</p>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className={`status-indicator ${sensor.isActive ? 'status-online' : 'status-offline'}`}></div>
-            <span className={`text-sm font-medium ${sensor.isActive ? 'text-green-600' : 'text-red-600'}`}>
-              {sensor.isActive ? 'Online' : 'Offline'}
-            </span>
+          <div className="flex flex-col items-end gap-1">
+            {/* Real / Demo badge */}
+            {sensor.isDemo
+              ? <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">Demo</span>
+              : <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>Live</span>
+            }
+            <div className="flex items-center space-x-1">
+              <div className={`status-indicator ${sensor.isActive ? 'status-online' : 'status-offline'}`}></div>
+              <span className={`text-sm font-medium ${sensor.isActive ? 'text-green-600' : 'text-red-600'}`}>
+                {sensor.isActive ? 'Online' : 'Offline'}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -152,6 +160,13 @@ const SensorData = ({ socket }) => {
                   <span className="font-medium">{sensor.sensorId}</span>
                 </div>
                 <div className="flex justify-between">
+                  <span className="text-gray-600">Type:</span>
+                  {sensor.isDemo
+                    ? <span className="font-medium text-amber-600">Demo (Simulated)</span>
+                    : <span className="font-medium text-emerald-600">Live Hardware</span>
+                  }
+                </div>
+                <div className="flex justify-between">
                   <span className="text-gray-600">Status:</span>
                   <span className={`font-medium ${sensor.isActive ? 'text-green-600' : 'text-red-600'}`}>
                     {sensor.isActive ? 'Online' : 'Offline'}
@@ -203,21 +218,10 @@ const SensorData = ({ socket }) => {
           ))}
         </div>
       ) : (
-        <div className="card text-center py-12">
+      <div className="card text-center py-12">
           <Radio className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-800 mb-2">No Sensors Detected</h3>
-          <p className="text-gray-600 mb-4">
-            Make sure your IoT devices are connected and sending data to the system.
-          </p>
-          <div className="bg-blue-50 rounded-xl p-4 text-left" style={{ maxWidth: '28rem', margin: '0 auto' }}>
-            <h4 className="font-medium text-blue-800 mb-2">Expected Sensors:</h4>
-            <ul className="text-sm text-blue-600 space-y-1">
-              <li>• Row A - Tomatoes (SENSOR_001)</li>
-              <li>• Row B - Lettuce (SENSOR_002)</li>
-              <li>• Row C - Peppers (SENSOR_003)</li>
-              <li>• Row D - Herbs (SENSOR_004)</li>
-            </ul>
-          </div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">No Sensors Connected</h3>
+          <p className="text-gray-600">Connect your ESP32 and run the serial bridge to see live data here.</p>
         </div>
       )}
 

@@ -1,11 +1,11 @@
 import React from 'react';
-import axios from 'axios';
+import api from '../api';
 import { AlertTriangle, XCircle, CheckCircle, Info, Megaphone, CalendarDays, ClipboardList } from 'lucide-react';
 
 const Notifications = ({ notifications, setNotifications }) => {
   const markAsRead = async (id) => {
     try {
-      await axios.patch(`/api/notifications/${id}/read`);
+      await api.patch(`/api/notifications/${id}/read`);
       setNotifications(prev => 
         prev.map(n => n.id === id ? { ...n, read: true } : n)
       );

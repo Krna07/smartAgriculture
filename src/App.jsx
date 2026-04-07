@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import io from 'socket.io-client';
-import { LayoutDashboard, Radio, Droplets, Bell, Leaf, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, Radio, Droplets, Bell, Leaf, LogOut, User, BookOpen } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
@@ -10,10 +10,12 @@ import Dashboard from './components/Dashboard';
 import IrrigationControl from './components/IrrigationControl';
 import SensorData from './components/SensorData';
 import Notifications from './components/Notifications';
+import LearnPanel from './components/LearnPanel';
 import './App.css';
 import Footer from './components/Footer';
 
-const socket = io('http://localhost:5000');
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const socket = io(BACKEND_URL);
 
 function NavLink({ to, children, icon: Icon }) {
   const location = useLocation();
@@ -29,6 +31,7 @@ function NavLink({ to, children, icon: Icon }) {
 function AppLayout() {
   const { user, logout } = useAuth();
   const [notifications, setNotifications] = useState([]);
+  const [learnOpen, setLearnOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -80,6 +83,10 @@ function AppLayout() {
               <User className="w-4 h-4" />
               <span className="hidden md:inline">{user?.name}</span>
             </div>
+            <button onClick={() => setLearnOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+              <BookOpen className="w-4 h-4" />
+              <span className="hidden md:inline">Guide</span>
+            </button>
             <button onClick={logout} className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
               <LogOut className="w-4 h-4" />
               <span className="hidden md:inline">Logout</span>
@@ -96,6 +103,7 @@ function AppLayout() {
           <Route path="/notifications" element={<Notifications notifications={notifications} setNotifications={setNotifications} />} />
         </Routes>
       </main>
+      <LearnPanel open={learnOpen} onClose={() => setLearnOpen(false)} />
       <Footer />
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { SlidersHorizontal, Zap, BarChart2, Sprout, AlertTriangle, Droplets, Loader2 } from 'lucide-react';
 
 const IrrigationControl = ({ socket }) => {
@@ -31,7 +31,7 @@ const IrrigationControl = ({ socket }) => {
 
   const fetchSensors = async () => {
     try {
-      const response = await axios.get('/api/sensors');
+      const response = await api.get('/api/sensors');
       setSensors(response.data);
     } catch (error) {
       console.error('Error fetching sensors:', error);
@@ -40,7 +40,7 @@ const IrrigationControl = ({ socket }) => {
 
   const fetchIrrigationHistory = async () => {
     try {
-      const response = await axios.get('/api/irrigation/history');
+      const response = await api.get('/api/irrigation/history');
       setIrrigationHistory(response.data);
     } catch (error) {
       console.error('Error fetching irrigation history:', error);
@@ -49,7 +49,7 @@ const IrrigationControl = ({ socket }) => {
 
   const startIrrigation = async (plantRow, customDuration = duration) => {
     try {
-      await axios.post('/api/irrigation/start', {
+      await api.post('/api/irrigation/start', {
         plantRow,
         duration: customDuration,
         triggeredBy: 'User'
