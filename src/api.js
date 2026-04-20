@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '',
+  timeout: 30000, // 30 seconds — handles Render cold start
 });
 
 // Inject JWT token on every request

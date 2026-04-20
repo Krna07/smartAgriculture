@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
+import SensorChart from "./SensorChart";
 import { Waves, Zap, Droplets, AlertTriangle, MapPin, Clock, History, Target } from "lucide-react";
 
 const THRESHOLD = 50; // target moisture %
@@ -110,11 +111,11 @@ const Dashboard = ({ socket, user }) => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-3 md:p-6">
+      <div className="max-w-7xl mx-auto w-full overflow-x-hidden">
 
         {/* HEADER */}
-        <header className="flex justify-between items-center mb-10 pb-4 border-b border-slate-800">
+        <header className="flex justify-between items-center mb-6 md:mb-10 pb-4 border-b border-slate-800">
           <div>
             <h1 className="text-xl font-bold flex items-center gap-2">
               <Waves className="w-5 h-5 text-green-400" />
@@ -138,7 +139,7 @@ const Dashboard = ({ socket, user }) => {
         </header>
 
         {/* TOP STATS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-10">
           <DataCard>
             <div className="flex justify-between items-center">
               <p className="text-sm text-slate-400">Active Sensors</p>
@@ -178,7 +179,7 @@ const Dashboard = ({ socket, user }) => {
         <ThresholdMonitor />
 
         {/* MAIN GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
 
           {/* SENSOR TELEMETRY */}
           <div className="lg:col-span-8">
@@ -213,6 +214,19 @@ const Dashboard = ({ socket, user }) => {
                 })
               )}
             </div>
+
+            {/* Sensor history charts */}
+            {sensors.length > 0 && (
+              <div className="mt-6 space-y-4">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <Target className="text-green-400" />
+                  Sensor History
+                </h2>
+                {sensors.map(sensor => (
+                  <SensorChart key={sensor.sensorId} sensorId={sensor.sensorId} plantRow={sensor.plantRow} />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* IRRIGATION HISTORY */}

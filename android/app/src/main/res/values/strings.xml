@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sirri</string>
+    <string name="title_activity_main">Sirri</string>
+    <string name="package_name">com.trilogy.Sirri</string>
+    <string name="custom_url_scheme">com.trilogy.Sirri</string>
+</resources>

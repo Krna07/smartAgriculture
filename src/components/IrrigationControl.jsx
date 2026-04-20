@@ -143,7 +143,7 @@ const IrrigationControl = ({ socket }) => {
                   min="1" 
                   max="60" 
                   value={duration}
-                  onChange={(e) => setDuration(parseInt(e.target.value))}
+                  onChange={(e) => setDuration(parseInt(e.target.value) || '')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />

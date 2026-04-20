@@ -15,6 +15,8 @@ import Profile from './pages/Profile';
 import './App.css';
 import Footer from './components/Footer';
 
+import api from './api';
+
 const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const socket = io(BACKEND_URL);
 
@@ -29,6 +31,16 @@ function NavLink({ to, children, icon: Icon }) {
   );
 }
 
+function MobileNavLink({ to, icon: Icon, label }) {
+  const location = useLocation();
+  const isActive = location.pathname === to;
+  return (
+    <Link to={to} className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl transition-colors ${isActive ? 'text-green-400' : 'text-slate-400'}`}>
+      <Icon className="w-5 h-5" />
+      <span className="text-xs font-medium">{label}</span>
+    </Link>
+  );
+}
 function AppLayout() {
   const { user, logout } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -36,8 +48,10 @@ function AppLayout() {
 
   useEffect(() => {
     if (!user) return;
-    // Join user-specific socket room
     socket.emit('join', user.id);
+
+    // Load existing notifications from backend on mount
+    api.get('/api/notifications').then(r => setNotifications(r.data)).catch(() => {});
 
     socket.on('newNotification', (n) => setNotifications(prev => [n, ...prev]));
     socket.on('irrigationAlert', (alert) => {
@@ -56,8 +70,9 @@ function AppLayout() {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="min-h-screen main-page">
-      <nav className="navbar">
+    <div className="min-h-screen main-page flex flex-col">
+      {/* Top navbar — logo + farm name only on mobile, full nav on desktop */}
+      <nav className="navbar flex-shrink-0">
         <div className="nav-container">
           <div className="nav-brand">
             <div className="nav-logo">
@@ -69,7 +84,8 @@ function AppLayout() {
             </div>
           </div>
 
-          <div className="nav-links">
+          {/* Desktop only nav links */}
+          <div className="nav-links hidden md:flex">
             <NavLink to="/" icon={LayoutDashboard}>Dashboard</NavLink>
             <NavLink to="/sensors" icon={Radio}>Sensors</NavLink>
             <NavLink to="/irrigation" icon={Droplets}>Irrigation</NavLink>
@@ -79,25 +95,32 @@ function AppLayout() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Desktop only right actions */}
+          <div className="hidden md:flex items-center gap-2">
             <div className="flex items-center gap-2 text-white/70 text-sm">
               <User className="w-4 h-4" />
-              <span className="hidden md:inline">{user?.name}</span>
+              <span>{user?.name}</span>
             </div>
             <NavLink to="/profile" icon={UserCircle}>Profile</NavLink>
-            <button onClick={() => setLearnOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+            <button onClick={() => setLearnOpen(true)} className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
               <BookOpen className="w-4 h-4" />
-              <span className="hidden md:inline">Guide</span>
+              <span>Guide</span>
             </button>
-            <button onClick={logout} className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+            <button onClick={logout} className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
               <LogOut className="w-4 h-4" />
-              <span className="hidden md:inline">Logout</span>
+              <span>Logout</span>
             </button>
           </div>
+
+          {/* Mobile only — guide button in top bar */}
+          <button onClick={() => setLearnOpen(true)} className="md:hidden flex items-center gap-1 px-2 py-1.5 text-sm text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+            <BookOpen className="w-4 h-4" />
+          </button>
         </div>
       </nav>
 
-      <main className="container py-8">
+      {/* Main content — grows to fill space, bottom padding = bottom nav height */}
+      <main className="flex-1 container py-4 md:py-8" style={{ paddingBottom: '5rem' }}>
         <Routes>
           <Route path="/" element={<Dashboard socket={socket} user={user} />} />
           <Route path="/sensors" element={<SensorData socket={socket} />} />
@@ -106,8 +129,31 @@ function AppLayout() {
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
+
+      {/* Desktop footer */}
+      <div className="hidden md:block flex-shrink-0"><Footer /></div>
+
+      {/* Mobile bottom navigation — fixed, never overlaps content due to paddingBottom above */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900 border-t border-slate-700" style={{ height: '4rem' }}>
+        <div className="flex justify-around items-center h-full px-1">
+          <MobileNavLink to="/" icon={LayoutDashboard} label="Home" />
+          <MobileNavLink to="/sensors" icon={Radio} label="Sensors" />
+          <MobileNavLink to="/irrigation" icon={Droplets} label="Irrigate" />
+          <div className="relative">
+            <MobileNavLink to="/notifications" icon={Bell} label="Alerts" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 right-0 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{unreadCount}</span>
+            )}
+          </div>
+          <MobileNavLink to="/profile" icon={UserCircle} label="Profile" />
+          <button onClick={logout} className="flex flex-col items-center gap-0.5 px-2 py-1 text-slate-400 active:text-white transition-colors">
+            <LogOut className="w-5 h-5" />
+            <span className="text-xs font-medium">Logout</span>
+          </button>
+        </div>
+      </nav>
+
       <LearnPanel open={learnOpen} onClose={() => setLearnOpen(false)} />
-      <Footer />
     </div>
   );
 }

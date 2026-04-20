@@ -1,0 +1,8 @@
+{
+  "appId": "com.trilogy.Sirri",
+  "appName": "Sirri",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
